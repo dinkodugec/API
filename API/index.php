@@ -2,11 +2,12 @@
 
 declare(strict_types=1);
 
-//ini_set("display_errors", "On");
-
 require dirname(__DIR__) . "/vendor/autoload.php";
 
 set_exception_handler("ErrorHandler::handleException");
+
+$dotenv = Dotenv\Dotenv::createImmutable(dirname(__DIR__));
+$dotenv->load();
 
 $path = parse_url($_SERVER["REQUEST_URI"], PHP_URL_PATH);
 
@@ -24,9 +25,7 @@ if ($resource != "tasks") {
 
 header("Content-type: application/json; charset=UTF-8");
 
-$database = new Database("localhost","api_db", "api_db_user");
-
-$database-> getConnection();
+$database = new Database($_ENV["DB_HOST"], $_ENV["DB_NAME"], $_ENV["DB_USER"]);
 
 $controller = new TaskController;
 
